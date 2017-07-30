@@ -22,9 +22,10 @@ import org.jnativehook.mouse.NativeMouseInputListener;
  */
 public class Main implements NativeKeyListener, NativeMouseInputListener
 {
-    private int posX = 1778;
-    private int posY = 672;
-    private TrayClass tray = new TrayClass();
+    private final TrayClass tray = new TrayClass();
+    private final UserPref pref = new UserPref();
+    private int posX = pref.getPosX();
+    private int posY = pref.getPosY();
 
     /**
      * @param args the command line arguments
@@ -45,7 +46,6 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
         Main main = new Main();
         GlobalScreen.addNativeKeyListener(main);
         GlobalScreen.addNativeMouseListener(main);
-//		GlobalScreen.addNativeMouseMotionListener(main);
 
     }
     
@@ -57,15 +57,16 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
         
         bot.mouseMove(x, y);    
         bot.mousePress(InputEvent.BUTTON1_MASK);
-        bot.mouseMove(x2+generator.nextInt(3), y2+generator.nextInt(3));
+//        bot.mouseMove(x2+generator.nextInt(13)-6, y2+generator.nextInt(13)-6);
+        bot.mouseMove(x2+generator.nextInt(115)-5, y2+generator.nextInt(11)-5);
         bot.mouseRelease(InputEvent.BUTTON1_MASK);
-        bot.mouseMove(x, y); 
+        bot.mouseMove(x, y);
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent ex)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -73,21 +74,14 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
     {
 //        System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
         
-        if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_UP)
+        if (e.getKeyCode() == NativeKeyEvent.VC_PAUSE)
         {
             Point p = MouseInfo.getPointerInfo().getLocation();
             posX = p.x;
             posY = p.y;
-        }
-        
-        
-        if (e.getKeyCode() == NativeKeyEvent.VC_END) {
-            try {
-                GlobalScreen.unregisterNativeHook();
-                System.exit(0);
-            } catch (NativeHookException ex) {
-                ex.printStackTrace();
-            }
+            
+            pref.setPosX(posX);
+            pref.setPosY(posY);
         }
         
     }
