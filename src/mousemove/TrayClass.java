@@ -59,7 +59,7 @@ public class TrayClass
         
         info.addActionListener((ActionEvent e) ->
         {
-            JOptionPane.showMessageDialog(null, "Page_up - zapis kratki\nEnd - zamkniecie programu");
+            JOptionPane.showMessageDialog(null, "Pause - zapis kratki");
         });
         
         exit.addActionListener((ActionEvent e) ->
