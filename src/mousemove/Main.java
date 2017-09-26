@@ -2,6 +2,7 @@
 package mousemove;
 
 import java.awt.AWTException;
+import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -24,8 +25,8 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
 {
     private final TrayClass tray = new TrayClass();
     private final UserPref pref = new UserPref();
-    private int posX = pref.getPosX();
-    private int posY = pref.getPosY();
+    private Point bpPosition = new Point(pref.getPosX(), pref.getPosY());
+    private int screenHeight = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
 
     /**
      * @param args the command line arguments
@@ -50,17 +51,17 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
     }
     
     
-    public static void click(int x, int y, int x2, int y2) throws AWTException
+    public static void moveItem(Point source, Point dest) throws AWTException
     {
         Robot bot = new Robot();
         Random generator = new Random();
         
-        bot.mouseMove(x, y);    
+        bot.mouseMove(source.x, source.y);    
         bot.mousePress(InputEvent.BUTTON1_MASK);
 //        bot.mouseMove(x2+generator.nextInt(13)-6, y2+generator.nextInt(13)-6);
-        bot.mouseMove(x2+generator.nextInt(115)-5, y2+generator.nextInt(11)-5);
+        bot.mouseMove(dest.x+generator.nextInt(115)-5, dest.y+generator.nextInt(11)-5);
         bot.mouseRelease(InputEvent.BUTTON1_MASK);
-        bot.mouseMove(x, y);
+        bot.mouseMove(source.x, source.y);
     }
 
     @Override
@@ -77,11 +78,11 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
         if (e.getKeyCode() == NativeKeyEvent.VC_PAUSE)
         {
             Point p = MouseInfo.getPointerInfo().getLocation();
-            posX = p.x;
-            posY = p.y;
+            bpPosition.x = p.x;
+            bpPosition.y = p.y;
             
-            pref.setPosX(posX);
-            pref.setPosY(posY);
+            pref.setPosX(bpPosition.x);
+            pref.setPosY(bpPosition.y);
         }
         
     }
@@ -95,13 +96,13 @@ public class Main implements NativeKeyListener, NativeMouseInputListener
     @Override
     public void nativeMouseClicked(NativeMouseEvent e)
     {
-        if (e.getX() > posX-20 && e.getY() > posY+35)
+        if (e.getX() > bpPosition.x-20 && e.getY() > bpPosition.y+35 && e.getY() < screenHeight)
         {
             if (e.getButton() == 1)
             {
                 try
                 {
-                    click(e.getX(),e.getY(), posX,posY);
+                    moveItem(new Point(e.getX(),e.getY()), bpPosition);
 
                 } catch (AWTException ex)
                 {
